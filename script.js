@@ -1,52 +1,38 @@
-const form = document.getElementById("shortenForm");
-const longUrl = document.getElementById("longUrl");
-const alias = document.getElementById("alias");
-const domain = document.getElementById("domain");
-const msg = document.getElementById("msg");
-const result = document.getElementById("result");
-const shortUrl = document.getElementById("shortUrl");
-const copyBtn = document.getElementById("copyBtn");
-const openBtn = document.getElementById("openBtn");
-const year = document.getElementById("year");
+/* LOCO SHORT LINK — v.gd only (mobile-friendly)
+ * v.gd JSON API:
+ *   https://v.gd/create.php?format=json&url=<URL>&shorturl=<alias-optional>
+ */
 
-year.textContent = new Date().getFullYear();
+const $ = (s, r = document) => r.querySelector(s);
+const els = {
+  form: $("#shortenForm"),
+  longUrl: $("#longUrl"),
+  alias: $("#alias"),
+  msg: $("#msg"),
+  resultSection: $("#resultSection"),
+  shortUrl: $("#shortUrl"),
+  copyBtn: $("#copyBtn"),
+  openBtn: $("#openBtn"),
+  qrImage: $("#qrImage"),
+  downloadQR: $("#downloadQR"),
+  clearBtn: $("#clearBtn"),
+  historyList: $("#historyList"),
+  clearHistory: $("#clearHistory"),
+  year: $("#year"),
+  menuBtn: $("#menuBtn"),
+  mainNav: $("#mainNav"),
+};
 
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const long = longUrl.value.trim();
-  if (!long.startsWith("http")) {
-    msg.textContent = "URL harus diawali http:// atau https://";
-    return;
-  }
-  msg.textContent = "Memproses...";
+// Year
+els.year.textContent = new Date().getFullYear();
 
-  const api = `https://${domain.value}/create.php?format=json&url=${encodeURIComponent(long)}${
-    alias.value ? `&shorturl=${alias.value}` : ""
-  }`;
-
-  try {
-    const res = await fetch(api);
-    const data = await res.json();
-    if (data.shorturl) {
-      shortUrl.value = data.shorturl;
-      openBtn.href = data.shorturl;
-      msg.textContent = "Berhasil! Link dipendekkan.";
-      result.classList.remove("hidden");
-    } else {
-      msg.textContent = data.errormessage || "Gagal memendekkan URL.";
-      result.classList.add("hidden");
-    }
-  } catch (err) {
-    msg.textContent = "Terjadi kesalahan. Coba lagi.";
-    result.classList.add("hidden");
-  }
+// Mobile menu
+els.menuBtn?.addEventListener("click", () => {
+  const open = els.mainNav.classList.toggle("open");
+  els.menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
 });
 
-copyBtn.addEventListener("click", async () => {
-  await navigator.clipboard.writeText(shortUrl.value);
-  copyBtn.textContent = "Copied!";
-  setTimeout(() => (copyBtn.textContent = "Copy"), 1200);
-});// Helpers
+// Helpers
 function isValidUrl(str) {
   try {
     const u = new URL(str);
@@ -61,11 +47,10 @@ function setMessage(text, isError = false) {
   els.msg.style.color = isError ? "#dc2626" : "var(--muted)";
 }
 
-function makeApiUrl(base, longUrl, alias) {
-  const apiHost = base === "v.gd" ? "https://v.gd" : "https://is.gd";
+function makeApiUrl(longUrl, alias) {
   const params = new URLSearchParams({ format: "json", url: longUrl });
   if (alias && alias.trim().length > 0) params.set("shorturl", alias.trim());
-  return `${apiHost}/create.php?${params.toString()}`;
+  return `https://v.gd/create.php?${params.toString()}`;
 }
 
 function setResult(shortlink) {
@@ -103,7 +88,7 @@ function renderHistory() {
     row.className = "item";
     row.innerHTML = `
       <div>
-        <div><strong>${it.short}</strong> <span class="badge">${it.domain}</span></div>
+        <div><strong>${it.short}</strong> <span class="badge">v.gd</span></div>
         <div class="muted" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%">${it.long}</div>
       </div>
       <div class="actions-row">
@@ -140,12 +125,11 @@ function renderHistory() {
   });
 }
 
-// Events
+// Submit
 els.form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const longUrl = els.longUrl.value.trim();
   const alias = els.alias.value.trim();
-  const domain = els.domain.value;
 
   if (!isValidUrl(longUrl)) {
     setMessage("Masukkan URL valid, wajib diawali http:// atau https://", true);
@@ -153,17 +137,17 @@ els.form.addEventListener("submit", async (e) => {
   }
 
   setMessage("Memproses…");
-  els.shortenBtn?.setAttribute?.("disabled", "true");
+  $("#shortenBtn")?.setAttribute?.("disabled", "true");
 
   try {
-    const apiUrl = makeApiUrl(domain, longUrl, alias);
+    const apiUrl = makeApiUrl(longUrl, alias);
     const res = await fetch(apiUrl, { method: "GET" });
     const data = await res.json();
 
     if (data?.shorturl) {
       setResult(data.shorturl);
       setMessage("Berhasil! Link sudah siap.");
-      pushHistory({ long: longUrl, short: data.shorturl, domain });
+      pushHistory({ long: longUrl, short: data.shorturl });
     } else {
       const err = data?.errormessage || "Gagal memendekkan URL.";
       setMessage(err, true);
@@ -172,10 +156,11 @@ els.form.addEventListener("submit", async (e) => {
     console.error(err);
     setMessage("Terjadi kesalahan jaringan. Coba lagi.", true);
   } finally {
-    els.shortenBtn?.removeAttribute?.("disabled");
+    $("#shortenBtn")?.removeAttribute?.("disabled");
   }
 });
 
+// Copy
 els.copyBtn.addEventListener("click", async () => {
   if (!els.shortUrl.value) return;
   await navigator.clipboard.writeText(els.shortUrl.value);
@@ -183,6 +168,7 @@ els.copyBtn.addEventListener("click", async () => {
   setTimeout(() => (els.copyBtn.textContent = "Copy"), 1200);
 });
 
+// Clear form
 els.clearBtn.addEventListener("click", () => {
   els.longUrl.value = "";
   els.alias.value = "";
@@ -190,6 +176,7 @@ els.clearBtn.addEventListener("click", () => {
   els.resultSection.classList.add("hidden");
 });
 
+// History clear
 els.clearHistory.addEventListener("click", () => {
   if (confirm("Hapus semua riwayat di perangkat ini?")) {
     localStorage.removeItem("loco_short_history");
