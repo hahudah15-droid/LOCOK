@@ -1,40 +1,52 @@
-/* LOCO SHORT LINK — front-end only
- * Uses is.gd / v.gd JSON API:
- *   https://is.gd/create.php?format=json&url=<URL>&shorturl=<alias-optional>
- *   https://v.gd/create.php?format=json&url=<URL>&shorturl=<alias-optional>
- */
+const form = document.getElementById("shortenForm");
+const longUrl = document.getElementById("longUrl");
+const alias = document.getElementById("alias");
+const domain = document.getElementById("domain");
+const msg = document.getElementById("msg");
+const result = document.getElementById("result");
+const shortUrl = document.getElementById("shortUrl");
+const copyBtn = document.getElementById("copyBtn");
+const openBtn = document.getElementById("openBtn");
+const year = document.getElementById("year");
 
-const $ = (s, r = document) => r.querySelector(s);
+year.textContent = new Date().getFullYear();
 
-const els = {
-  form: $("#shortenForm"),
-  longUrl: $("#longUrl"),
-  alias: $("#alias"),
-  domain: $("#domain"),
-  msg: $("#msg"),
-  resultSection: $("#resultSection"),
-  shortUrl: $("#shortUrl"),
-  copyBtn: $("#copyBtn"),
-  openBtn: $("#openBtn"),
-  qrImage: $("#qrImage"),
-  downloadQR: $("#downloadQR"),
-  clearBtn: $("#clearBtn"),
-  historyList: $("#historyList"),
-  clearHistory: $("#clearHistory"),
-  year: $("#year"),
-  menuBtn: $("#menuBtn"),
-  mainNav: $("#mainNav"),
-};
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const long = longUrl.value.trim();
+  if (!long.startsWith("http")) {
+    msg.textContent = "URL harus diawali http:// atau https://";
+    return;
+  }
+  msg.textContent = "Memproses...";
 
-els.year.textContent = new Date().getFullYear();
+  const api = `https://${domain.value}/create.php?format=json&url=${encodeURIComponent(long)}${
+    alias.value ? `&shorturl=${alias.value}` : ""
+  }`;
 
-// Mobile menu
-els.menuBtn?.addEventListener("click", () => {
-  const open = els.mainNav.classList.toggle("open");
-  els.menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
+  try {
+    const res = await fetch(api);
+    const data = await res.json();
+    if (data.shorturl) {
+      shortUrl.value = data.shorturl;
+      openBtn.href = data.shorturl;
+      msg.textContent = "Berhasil! Link dipendekkan.";
+      result.classList.remove("hidden");
+    } else {
+      msg.textContent = data.errormessage || "Gagal memendekkan URL.";
+      result.classList.add("hidden");
+    }
+  } catch (err) {
+    msg.textContent = "Terjadi kesalahan. Coba lagi.";
+    result.classList.add("hidden");
+  }
 });
 
-// Helpers
+copyBtn.addEventListener("click", async () => {
+  await navigator.clipboard.writeText(shortUrl.value);
+  copyBtn.textContent = "Copied!";
+  setTimeout(() => (copyBtn.textContent = "Copy"), 1200);
+});// Helpers
 function isValidUrl(str) {
   try {
     const u = new URL(str);
