@@ -5,42 +5,54 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>LOCO SHORT LINK — Pemendek URL Cepat</title>
   <meta name="description" content="LOCO SHORT LINK: pemendek URL cepat, gratis, dan tanpa ribet.">
-  <link rel="preload" href="style.css" as="style">
   <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔗</text></svg>">
 </head>
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="/">
+      <a class="brand" href="#">
         <span class="brand-badge">LOCO</span>
         <span class="brand-text">SHORT LINK</span>
       </a>
-
-      <button id="menuBtn" class="burger" aria-label="Toggle menu" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
-
-      <nav id="mainNav" class="nav">
-        <a href="#about">Tentang</a>
-        <a href="#faq">FAQ</a>
-        <a target="_blank" rel="noopener" href="https://github.com/">GitHub</a>
-      </nav>
     </div>
   </header>
 
   <main class="container">
     <section class="hero">
       <h1>Potong link panjangmu dalam hitungan detik</h1>
-      <p class="sub">Gratis, tanpa login, dengan opsi <em>custom alias</em> & QR.</p>
+      <p class="sub">Gratis, tanpa login, dengan alias custom & QR.</p>
 
       <form id="shortenForm" class="card form">
+        <label>Masukkan URL:</label>
+        <input id="longUrl" type="url" class="input" placeholder="https://contoh.com/artikel/panjang..." required>
         <div class="row">
-          <label class="label">URL Panjang</label>
-          <input id="longUrl" class="input" type="url" placeholder="https://contoh.com/artikel/panjang..." required>
+          <input id="alias" type="text" class="input" placeholder="Alias (opsional)">
+          <select id="domain" class="input">
+            <option value="is.gd" selected>is.gd</option>
+            <option value="v.gd">v.gd</option>
+          </select>
         </div>
+        <button class="btn primary" type="submit">Shorten</button>
+        <p id="msg" class="msg"></p>
+      </form>
 
-        <div class="row grid-2">
+      <div id="result" class="card hidden">
+        <input id="shortUrl" class="input" readonly>
+        <button id="copyBtn" class="btn">Copy</button>
+        <a id="openBtn" class="btn ghost" target="_blank">Buka</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© <span id="year"></span> LOCO SHORT LINK — Powered by <strong>LOCO STORE</strong></p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>        <div class="row grid-2">
           <div>
             <label class="label">Alias (opsional)</label>
             <input id="alias" class="input" type="text" placeholder="misal: loco-deal">
@@ -126,3 +138,4 @@
   <script src="script.js" defer></script>
 </body>
 </html>
+
