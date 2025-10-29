@@ -14,56 +14,31 @@
         <span class="brand-badge">LOCO</span>
         <span class="brand-text">SHORT LINK</span>
       </a>
+      <button id="menuBtn" class="burger" aria-label="Buka menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <nav id="mainNav" class="nav">
+        <a href="#about">About</a>
+        <a href="#faq">FAQ</a>
+      </nav>
     </div>
   </header>
 
   <main class="container">
     <section class="hero">
       <h1>Potong link panjangmu dalam hitungan detik</h1>
-      <p class="sub">Gratis, tanpa login, dengan alias custom & QR.</p>
+      <p class="sub">Gratis, tanpa login, dengan alias custom & QR. (Domain: <strong>v.gd</strong>)</p>
 
-      <form id="shortenForm" class="card form">
-        <label>Masukkan URL:</label>
-        <input id="longUrl" type="url" class="input" placeholder="https://contoh.com/artikel/panjang..." required>
+      <form id="shortenForm" class="card form" novalidate>
         <div class="row">
-          <input id="alias" type="text" class="input" placeholder="Alias (opsional)">
-          <select id="domain" class="input">
-            <option value="is.gd" selected>is.gd</option>
-            <option value="v.gd">v.gd</option>
-          </select>
+          <label class="label" for="longUrl">URL Panjang</label>
+          <input id="longUrl" class="input" type="url" inputmode="url"
+                 placeholder="https://contoh.com/artikel/panjang..." required>
         </div>
-        <button class="btn primary" type="submit">Shorten</button>
-        <p id="msg" class="msg"></p>
-      </form>
 
-      <div id="result" class="card hidden">
-        <input id="shortUrl" class="input" readonly>
-        <button id="copyBtn" class="btn">Copy</button>
-        <a id="openBtn" class="btn ghost" target="_blank">Buka</a>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container">
-      <p>© <span id="year"></span> LOCO SHORT LINK — Powered by <strong>LOCO STORE</strong></p>
-    </div>
-  </footer>
-
-  <script src="script.js"></script>
-</body>
-</html>        <div class="row grid-2">
-          <div>
-            <label class="label">Alias (opsional)</label>
-            <input id="alias" class="input" type="text" placeholder="misal: loco-deal">
-          </div>
-          <div>
-            <label class="label">Domain</label>
-            <select id="domain" class="input">
-              <option value="is.gd" selected>is.gd</option>
-              <option value="v.gd">v.gd</option>
-            </select>
-          </div>
+        <div class="row">
+          <label class="label" for="alias">Alias (opsional)</label>
+          <input id="alias" class="input" type="text" placeholder="misal: loco-deal">
         </div>
 
         <div class="actions">
@@ -103,39 +78,38 @@
     <section id="about" class="section">
       <h2>Tentang</h2>
       <p>
-        LOCO SHORT LINK adalah landing sederhana untuk memendekkan URL menggunakan
-        layanan publik <code>is.gd</code> / <code>v.gd</code>. Semua proses terjadi di browser—tanpa server sendiri.
+        LOCO SHORT LINK memendekkan URL menggunakan layanan publik <code>v.gd</code>.
+        Semua proses terjadi di browser—tanpa server.
       </p>
     </section>
 
     <section id="faq" class="section">
       <h2>FAQ</h2>
       <details>
-        <summary>Apakah perlu API key?</summary>
-        <p>Tidak. is.gd/v.gd menyediakan endpoint publik.</p>
+        <summary>Perlu API key?</summary>
+        <p>Tidak, <code>v.gd</code> menyediakan endpoint publik.</p>
       </details>
       <details>
-        <summary>Bisakah pakai alias custom?</summary>
-        <p>Iya, coba isi kolom “Alias”. Jika sudah dipakai orang lain, API akan menolak.</p>
+        <summary>Bisa alias custom?</summary>
+        <p>Iya. Jika alias sudah dipakai orang lain, API akan menolak.</p>
       </details>
       <details>
-        <summary>Data saya disimpan dimana?</summary>
-        <p>Riwayat hanya disimpan di <em>localStorage</em> perangkatmu, bukan di server kami.</p>
+        <summary>Data disimpan di mana?</summary>
+        <p>Riwayat hanya disimpan di <em>localStorage</em> perangkatmu.</p>
       </details>
     </section>
   </main>
 
   <footer class="site-footer">
-    <div class="container">
+    <div class="container foot-flex">
       <span>© <span id="year"></span> LOCO SHORT LINK</span>
       <span class="sep">•</span>
       <a href="#about">About</a>
       <span class="sep">•</span>
-      <a target="_blank" rel="noopener" href="https://is.gd/apishorteningreference.php">is.gd API</a>
+      <strong>Powered by LOCO STORE</strong>
     </div>
   </footer>
 
   <script src="script.js" defer></script>
 </body>
 </html>
-
